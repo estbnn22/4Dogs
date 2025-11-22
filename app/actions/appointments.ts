@@ -111,27 +111,29 @@ export async function createAppointment(formData: FormData) {
   });
 
   const customerEmail = user.primaryEmail || null;
-if (customerEmail) {
-  await sendAppointmentConfirmationEmail({
-    to: customerEmail,
+  if (customerEmail) {
+    await sendAppointmentConfirmationEmail({
+      to: customerEmail,
+      ownerName,
+      dogName,
+      scheduledAt,
+      totalPriceCents,
+    });
+  }
+
+  await sendAdminNewAppointmentEmail({
     ownerName,
     dogName,
+    dogBreed,
     scheduledAt,
     totalPriceCents,
+    appointmentId: created.id,
+    userEmail: customerEmail,
   });
+
+  // redirect throws; no need to await
+  redirect("/booking/success");
 }
-
-await sendAdminNewAppointmentEmail({
-  ownerName,
-  dogName,
-  dogBreed,
-  scheduledAt,
-  totalPriceCents,
-  appointmentId: created.id,
-  userEmail: customerEmail,
-});
-
-redirect("/booking/success");
 
 export async function cancelAppointment(formData: FormData) {
   const user = await stackServerApp.getUser();
