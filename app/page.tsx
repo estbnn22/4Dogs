@@ -208,7 +208,7 @@ export default function Home() {
               <p className="text-sm text-gray-700">
                 3409 Conway St
                 <br />
-                Fort Worth, TX 761xx
+                Fort Worth, TX 76111
               </p>
               <div className="mt-2 w-full h-64 rounded-xl overflow-hidden">
                 <iframe
