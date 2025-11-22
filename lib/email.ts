@@ -65,7 +65,7 @@ export async function sendAppointmentConfirmationEmail(
             totalPriceCents
           )}</li>
         </ul>
-        <p>You can view your bookings at <a href="http://localhost:3000/myAppts">My Appointments</a>.</p>
+        <p>You can view your bookings at <a href="https://www.4dogsgrooming.org/myAppts">My Appointments</a>.</p>
         <p>– 4Dogs Grooming</p>
       `,
     });
@@ -88,7 +88,7 @@ export async function sendAdminNewAppointmentEmail(
   }
 
   // While you're in Resend test mode, this MUST be your own email.
-  const adminEmail = process.env.ADMIN_EMAIL || "toymachuca@hotmail.com"; // change later when domain verified
+  const adminEmail = process.env.ADMIN_EMAIL || "toymachuca@hotmail.com"; 
 
   const {
     ownerName,
@@ -129,7 +129,7 @@ export async function sendAdminNewAppointmentEmail(
 
         <p style="margin-top: 16px;">
           You can manage this appointment in the admin dashboard:<br/>
-          <a href="http://localhost:3000/admin" style="color: #b45309; text-decoration: underline;">
+          <a href="https://www.4dogsgrooming.org/admin" style="color: #b45309; text-decoration: underline;">
             Go to Admin · Appointments
           </a>
         </p>
