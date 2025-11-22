@@ -110,7 +110,7 @@ export async function createAppointment(formData: FormData) {
     },
   });
 
-  const customerEmail = created.stackUserEmail || user.primaryEmail || null;
+  const customerEmail = user.primaryEmail || null;
   if (customerEmail) {
     sendAppointmentConfirmationEmail({
       to: customerEmail,
