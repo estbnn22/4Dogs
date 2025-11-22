@@ -96,7 +96,7 @@ export default function Home() {
         <div className="flex flex-col items-center">
           <div className="flex flex-col items-center py-15 gap-5">
             <h1 className="text-5xl font-bold text-center">
-              4Dogs Permium Services
+              4Dogs Premium Services
             </h1>
             <p className="text-md md:text-xl text-center">
               Every dog's needs are made easy here at 4Dogs Grooming
