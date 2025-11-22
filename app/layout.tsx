@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "4Dogs Grooming",
-  description: "Proffessional Dog Grooming Services in Fort Worth, TX",
+  description: "Professional Dog Grooming Services in Fort Worth, TX",
 };
 
 export default function RootLayout({
