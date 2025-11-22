@@ -111,31 +111,27 @@ export async function createAppointment(formData: FormData) {
   });
 
   const customerEmail = user.primaryEmail || null;
-  if (customerEmail) {
-    sendAppointmentConfirmationEmail({
-      to: customerEmail,
-      ownerName,
-      dogName,
-      scheduledAt,
-      totalPriceCents,
-    }).catch((err) =>
-      console.error("[EMAIL] Failed to send confirmation:", err)
-    );
-  }
-  sendAdminNewAppointmentEmail({
+if (customerEmail) {
+  await sendAppointmentConfirmationEmail({
+    to: customerEmail,
     ownerName,
     dogName,
-    dogBreed,
     scheduledAt,
     totalPriceCents,
-    appointmentId: created.id,
-    userEmail: customerEmail,
-  }).catch((err) =>
-    console.error("[EMAIL] Failed to send admin notification:", err)
-  );
-
-  redirect("/booking/success");
+  });
 }
+
+await sendAdminNewAppointmentEmail({
+  ownerName,
+  dogName,
+  dogBreed,
+  scheduledAt,
+  totalPriceCents,
+  appointmentId: created.id,
+  userEmail: customerEmail,
+});
+
+redirect("/booking/success");
 
 export async function cancelAppointment(formData: FormData) {
   const user = await stackServerApp.getUser();
