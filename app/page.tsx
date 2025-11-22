@@ -51,7 +51,7 @@ export default function Home() {
               4Dogs Grooming
             </p>
             <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-6xl">
-              Professionall Dog Grooming
+              Professional Dog Grooming
               <br className="hidden sm:block" /> in Fort Worth
             </h1>
 
