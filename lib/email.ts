@@ -51,7 +51,7 @@ export async function sendAppointmentConfirmationEmail(
     console.log("[EMAIL] Sending confirmation to:", to);
 
     const result = await resend.emails.send({
-      from: "4Dogs Grooming <no-reply@4dogsgrooming.org>",
+      from: "4Dogs Grooming <appointments@4dogsgrooming.org>",
       to,
       subject: `Appointment confirmed for ${dogName}`,
       html: `
@@ -101,7 +101,7 @@ export async function sendAdminNewAppointmentEmail(
   } = data;
 
   await resend.emails.send({
-    from: "4Dogs Alerts <no-reply@4dogsgrooming.org>", // later: use your own domain email
+    from: "4Dogs Alerts <appointments@4dogsgrooming.org>",
     to: adminEmail,
     subject: `🆕 New appointment booked for ${dogName}`,
     html: `
