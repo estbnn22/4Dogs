@@ -43,6 +43,8 @@ export async function sendAppointmentConfirmationEmail(
     return;
   }
 
+   console.log("[EMAIL] Sending confirmation to:", data.to);
+
   try {
     const { to, ownerName, dogName, scheduledAt, totalPriceCents } = data;
 
