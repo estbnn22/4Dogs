@@ -7,6 +7,8 @@ import { DogSize } from "@prisma/client";
 import {
   sendAdminNewAppointmentEmail,
   sendAppointmentConfirmationEmail,
+  sendAppointmentStatusEmail,
+  sendAdminAppointmentCancelledEmail,
 } from "@/lib/email";
 
 export async function createAppointment(formData: FormData) {
@@ -152,19 +154,38 @@ export async function cancelAppointment(formData: FormData) {
       id: appointmentId,
       stackUserId: user.id,
     },
-    select: { id: true },
   });
 
   if (!appt) {
     throw new Error("Appointment not found");
   }
 
-  // ✅ Just mark it as CANCELLED – don't delete it
-  await prisma.appointment.update({
+  // ✅ Mark it as CANCELLED
+  const updated = await prisma.appointment.update({
     where: { id: appt.id },
     data: {
       status: "CANCELLED",
     },
+  });
+
+  // 📧 Email to user
+  if (updated.stackUserEmail) {
+    await sendAppointmentStatusEmail({
+      to: updated.stackUserEmail,
+      status: "CANCELLED",
+      ownerName: updated.ownerName,
+      dogName: updated.dogName,
+      scheduledAt: updated.scheduledAt,
+      totalPriceCents: updated.totalPriceCents,
+    });
+  }
+
+  // 📧 Email to admin
+  await sendAdminAppointmentCancelledEmail({
+    ownerName: updated.ownerName,
+    dogName: updated.dogName,
+    scheduledAt: updated.scheduledAt,
+    appointmentId: updated.id,
   });
 
   redirect("/myAppts");
