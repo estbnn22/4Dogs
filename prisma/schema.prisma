@@ -29,6 +29,8 @@ model Appointment {
   scheduledAt DateTime
   status      AppointmentStatus @default(PENDING)
 
+  email String?
+
   basePriceCents  Int
   totalPriceCents Int
 
