@@ -5,37 +5,103 @@ import { prisma } from "@/lib/prisma";
 import { stackServerApp } from "@/stack/server";
 import { redirect } from "next/navigation";
 import { isAdminEmail } from "@/lib/admin";
+import {
+  sendAppointmentStatusEmail,
+  sendAdminAppointmentCancelledEmail,
+} from "@/lib/email";
+
+type AppointmentStatus = "PENDING" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
 
 async function requireAdmin() {
   const user = await stackServerApp.getUser();
   const email = user?.primaryEmail ?? null;
 
   if (!user || !email || !isAdminEmail(email)) {
-    redirect("/"); // or "/logIn" if you prefer
+    redirect("/");
   }
 
   return user;
 }
 
+// ✅ Called from the status buttons in the table
 export async function updateAppointmentStatus(formData: FormData) {
   await requireAdmin();
 
   const id = formData.get("appointmentId");
-  const status = formData.get("status");
+  const statusRaw = formData.get("status");
 
-  if (!id || typeof id !== "string" || !status || typeof status !== "string") {
-    throw new Error("Invalid form data");
+  if (!id || typeof id !== "string") {
+    throw new Error("Missing appointment ID");
   }
 
-  // status should be one of: PENDING | CONFIRMED | COMPLETED | CANCELLED
-  await prisma.appointment.update({
+  if (!statusRaw || typeof statusRaw !== "string") {
+    throw new Error("Missing status");
+  }
+
+  const validStatuses: AppointmentStatus[] = [
+    "PENDING",
+    "CONFIRMED",
+    "COMPLETED",
+    "CANCELLED",
+  ];
+
+  if (!validStatuses.includes(statusRaw as AppointmentStatus)) {
+    throw new Error("Invalid status value");
+  }
+
+  const newStatus = statusRaw as AppointmentStatus;
+
+  const existing = await prisma.appointment.findUnique({
     where: { id },
-    data: { status: status as any },
   });
+
+  if (!existing) {
+    throw new Error("Appointment not found");
+  }
+
+  // If nothing changed, just go back
+  if (existing.status === newStatus) {
+    redirect("/admin/appointments");
+  }
+
+  const updated = await prisma.appointment.update({
+    where: { id },
+    data: { status: newStatus },
+  });
+
+  const userEmail = updated.stackUserEmail; // stored at booking time
+
+  // 📧 Email to user (for CONFIRMED / COMPLETED / CANCELLED)
+  if (userEmail && newStatus !== "PENDING") {
+    const emailStatus =
+      newStatus === "CONFIRMED" || newStatus === "COMPLETED"
+        ? newStatus
+        : "CANCELLED";
+
+    await sendAppointmentStatusEmail({
+      to: userEmail,
+      status: emailStatus,
+      ownerName: updated.ownerName,
+      dogName: updated.dogName,
+      scheduledAt: updated.scheduledAt,
+      totalPriceCents: updated.totalPriceCents,
+    });
+  }
+
+  // 📧 Email to admin if cancelled
+  if (newStatus === "CANCELLED") {
+    await sendAdminAppointmentCancelledEmail({
+      ownerName: updated.ownerName,
+      dogName: updated.dogName,
+      scheduledAt: updated.scheduledAt,
+      appointmentId: updated.id,
+    });
+  }
 
   redirect("/admin/appointments");
 }
 
+// ✅ Edit details page (/admin/appointments/[id]) – no status/email here
 export async function updateAppointment(formData: FormData) {
   await requireAdmin();
 
