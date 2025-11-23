@@ -3,6 +3,24 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+type AppointmentStatus = "CONFIRMED" | "COMPLETED" | "CANCELLED";
+
+type StatusUpdateEmailInput = {
+  to: string;
+  ownerName: string;
+  dogName: string;
+  scheduledAt: Date;
+  totalPriceCents: number;
+  status: AppointmentStatus;
+};
+
+type AdminCancelledEmailInput = {
+  ownerName: string;
+  dogName: string;
+  scheduledAt: Date;
+  appointmentId: string;
+};
+
 type ConfirmationEmailInput = {
   to: string;
   ownerName: string;
@@ -43,7 +61,7 @@ export async function sendAppointmentConfirmationEmail(
     return;
   }
 
-   console.log("[EMAIL] Sending confirmation to:", data.to);
+  console.log("[EMAIL] Sending confirmation to:", data.to);
 
   try {
     const { to, ownerName, dogName, scheduledAt, totalPriceCents } = data;
@@ -53,7 +71,7 @@ export async function sendAppointmentConfirmationEmail(
     const result = await resend.emails.send({
       from: "4Dogs Grooming <appointments@4dogsgrooming.org>",
       to,
-      subject: `Appointment confirmed for ${dogName}`,
+      subject: `Appointment booked for ${dogName}`,
       html: `
         <h2>Hi ${ownerName},</h2>
         <p>Thank you for booking with 4Dogs Grooming! 🐾</p>
@@ -64,8 +82,9 @@ export async function sendAppointmentConfirmationEmail(
           <li><strong>Estimated Total:</strong> ${formatPrice(
             totalPriceCents
           )}</li>
+          <li>status: PENDING</li>
         </ul>
-        <p>You can view your bookings at <a href="https://www.4dogsgrooming.org/myAppts">My Appointments</a>.</p>
+        <p>You can view your bookings at <a href="https://4dogsgrooming.org/myAppts">My Appointments</a>.</p>
         <p>– 4Dogs Grooming</p>
       `,
     });
@@ -88,7 +107,7 @@ export async function sendAdminNewAppointmentEmail(
   }
 
   // While you're in Resend test mode, this MUST be your own email.
-  const adminEmail = process.env.ADMIN_EMAIL || "toymachuca@hotmail.com"; 
+  const adminEmail = process.env.ADMIN_EMAIL || "toymachuca@hotmail.com"; // change later when domain verified
 
   const {
     ownerName,
@@ -129,11 +148,132 @@ export async function sendAdminNewAppointmentEmail(
 
         <p style="margin-top: 16px;">
           You can manage this appointment in the admin dashboard:<br/>
-          <a href="https://www.4dogsgrooming.org/admin" style="color: #b45309; text-decoration: underline;">
+          <a href="http://localhost:3000/admin" style="color: #b45309; text-decoration: underline;">
             Go to Admin · Appointments
           </a>
         </p>
       </div>
     `,
   });
+}
+
+export async function sendAppointmentStatusEmail(data: StatusUpdateEmailInput) {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("RESEND_API_KEY not set; skipping status email.");
+    return;
+  }
+
+  const { to, ownerName, dogName, scheduledAt, totalPriceCents, status } = data;
+
+  const subjectByStatus: Record<AppointmentStatus, string> = {
+    CONFIRMED: `✅ Your appointment for ${dogName} is confirmed`,
+    COMPLETED: `✨ ${dogName}'s grooming is complete`,
+    CANCELLED: `⚠️ Your appointment for ${dogName} has been cancelled`,
+  };
+
+  const introByStatus: Record<AppointmentStatus, string> = {
+    CONFIRMED:
+      "Good news! Your grooming appointment has been confirmed. Here are the details:",
+    COMPLETED:
+      "We loved having your pup in today! Here are the details of the completed appointment:",
+    CANCELLED:
+      "This is to let you know that your grooming appointment has been cancelled. Here are the details:",
+  };
+
+  try {
+    const result = await resend.emails.send({
+      from: "4Dogs Grooming <appointments@4dogsgrooming.org>",
+      to,
+      subject: subjectByStatus[status],
+      html: `
+        <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.5; color: #111827;">
+          <h2 style="margin-bottom: 8px;">Hi ${ownerName},</h2>
+          <p style="margin: 0 0 16px;">${introByStatus[status]}</p>
+
+          <h3 style="margin: 16px 0 4px;">Appointment details</h3>
+          <ul style="margin: 0 0 16px; padding-left: 20px;">
+            <li><strong>Dog:</strong> ${dogName}</li>
+            <li><strong>Date & Time:</strong> ${formatDateTime(
+              scheduledAt
+            )}</li>
+            <li><strong>Estimated Total:</strong> ${formatPrice(
+              totalPriceCents
+            )}</li>
+          </ul>
+
+          ${
+            status === "CANCELLED"
+              ? `<p style="margin: 0 0 12px;">
+                  If this was a mistake or you’d like to rebook, you can schedule a new appointment anytime.
+                </p>`
+              : ""
+          }
+
+          <p style="margin-top: 16px;">
+            You can view your appointments at
+            <a href="https://4dogsgrooming.org/myAppts" style="color:#b45309; text-decoration: underline;">
+              My Appointments
+            </a>.
+          </p>
+
+          <p style="margin-top: 16px;">– 4Dogs Grooming</p>
+        </div>
+      `,
+    });
+
+    console.log("[EMAIL] Status email sent:", status, "to", to, result);
+  } catch (err) {
+    console.error("[EMAIL] Failed to send status email", status, err);
+  }
+}
+
+// 👇 Admin notification when an appointment is cancelled
+export async function sendAdminAppointmentCancelledEmail(
+  data: AdminCancelledEmailInput
+) {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("RESEND_API_KEY not set; skipping admin cancel email.");
+    return;
+  }
+
+  const adminEmail = process.env.ADMIN_EMAIL || "toymachuca@hotmail.com";
+
+  const { ownerName, dogName, scheduledAt, appointmentId } = data;
+
+  try {
+    const result = await resend.emails.send({
+      from: "4Dogs Alerts <appointments@4dogsgrooming.org>",
+      to: adminEmail,
+      subject: `❌ Appointment cancelled for ${dogName}`,
+      html: `
+        <div style="font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; line-height: 1.5; color: #111827;">
+          <h2 style="margin-bottom: 8px;">Appointment Cancelled</h2>
+          <p style="margin: 0 0 16px;">
+            An existing appointment has been cancelled by the user.
+          </p>
+
+          <h3 style="margin: 16px 0 4px;">Details</h3>
+          <ul style="margin: 0 0 16px; padding-left: 20px;">
+            <li><strong>Owner:</strong> ${ownerName}</li>
+            <li><strong>Dog:</strong> ${dogName}</li>
+            <li><strong>Date & Time:</strong> ${formatDateTime(
+              scheduledAt
+            )}</li>
+            <li><strong>Appointment ID:</strong> ${appointmentId}</li>
+          </ul>
+
+          <p style="margin-top: 16px;">
+            You can manage this appointment in the admin dashboard:<br/>
+            <a href="https://4dogsgrooming.org/admin" style="color: #b45309; text-decoration: underline;">
+              Go to Admin · Appointments
+            </a>
+          </p>
+        </div>
+      `,
+    });
+
+    console.log("[EMAIL] Admin cancel email sent:", result);
+  } catch (err) {
+    console.error("[EMAIL] Failed to send admin cancel email", err);
+  }
 }
