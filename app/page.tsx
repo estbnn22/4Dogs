@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,13 +14,43 @@ import {
 
 export default function Home() {
   const services = [
-    { name: "Warm Bath", icon: <Bubbles size={64} /> },
-    { name: "Gentle Blowdry & Brushing", icon: <Wind size={64} /> },
-    { name: "Nail Trimming & Filing", icon: <PawPrint size={64} /> },
-    { name: "Teeth & Ear Cleaning", icon: <Dog size={64} /> },
-    { name: "Full Breed-Specific Grooming", icon: <Scissors size={64} /> },
-    { name: "Basic Trim", icon: <ScissorsLineDashed size={64} /> },
+    {
+      name: "Warm Bath",
+      icon: <Bubbles size={64} />,
+      desc: "Cozy warm bath using gentle, dog-safe shampoo to leave coats clean and soft.",
+    },
+    {
+      name: "Gentle Blowdry & Brushing",
+      icon: <Wind size={64} />,
+      desc: "Low-noise blowdry and thorough brushing to remove loose fur and tangles.",
+    },
+    {
+      name: "Nail Trimming & Filing",
+      icon: <PawPrint size={64} />,
+      desc: "Careful nail trim and smooth filing to keep paws comfortable and safe.",
+    },
+    {
+      name: "Teeth & Ear Cleaning",
+      icon: <Dog size={64} />,
+      desc: "Freshen breath and gently clean ears to support your pup’s overall health.",
+    },
+    {
+      name: "Full Breed-Specific Grooming",
+      icon: <Scissors size={64} />,
+      desc: "Customized haircut and styling tailored to your dog’s breed and coat type.",
+    },
+    {
+      name: "Basic Trim",
+      icon: <ScissorsLineDashed size={64} />,
+      desc: "Quick tidy-up around face, paws and sanitary areas between full grooms.",
+    },
   ];
+
+  const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
+
+  const handleFlip = (index: number) => {
+    setFlippedIndex((prev) => (prev === index ? null : index));
+  };
 
   const packages = [
     {
@@ -92,32 +125,64 @@ export default function Home() {
       </section>
       {/* Services Section */}
 
-      <section className="bg-white">
-        <div className="flex flex-col items-center">
-          <div className="flex flex-col items-center py-15 gap-5">
+      <section className="bg-white py-20">
+        <div className="max-w-6xl mx-auto flex flex-col items-center px-6">
+          <div className="flex flex-col items-center gap-5 mb-10">
             <h1 className="text-5xl font-bold text-center">
               4Dogs Premium Services
             </h1>
-            <p className="text-md md:text-xl text-center">
-              Every dog's needs are made easy here at 4Dogs Grooming
+            <p className="text-md md:text-xl text-center text-gray-600">
+              We make every dog’s grooming experience easy, comfortable, and
+              stress-free.
             </p>
           </div>
-          <div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {services.map((service, index) => (
-                <div
-                  key={index}
-                  className="flex flex-col items-center justify-center gap-4 m-5 p-5 rounded-lg shadow-sm md:hover:shadow-md bg-yellow-50"
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
+            {services.map((service, index) => {
+              const isFlipped = flippedIndex === index;
+
+              return (
+                <button
+                  key={service.name}
+                  type="button"
+                  onClick={() => handleFlip(index)}
+                  className="group relative h-64 w-full [perspective:1000px] focus:outline-none"
                 >
-                  {service.icon}
-                  <h3 className="text-2xl font-semibold">{service.name}</h3>
-                </div>
-              ))}
-            </div>
+                  <div
+                    className={`relative h-full w-full rounded-2xl bg-yellow-50 shadow-sm border border-yellow-200 transition-transform duration-500 [transform-style:preserve-3d] ${
+                      isFlipped ? "[transform:rotateY(180deg)]" : ""
+                    }`}
+                  >
+                    {/* Front */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 [backface-visibility:hidden]">
+                      <div className="text-yellow-600">{service.icon}</div>
+                      <h3 className="text-2xl font-semibold text-gray-900">
+                        {service.name}
+                      </h3>
+                      <p className="text-sm text-gray-500">
+                        Tap to see details
+                      </p>
+                    </div>
+
+                    {/* Back */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center bg-yellow-100 rounded-2xl [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                      <h3 className="text-xl font-semibold text-gray-900">
+                        {service.name}
+                      </h3>
+                      <p className="text-sm text-gray-700">{service.desc}</p>
+                      <span className="text-xs font-medium uppercase tracking-wide text-yellow-700">
+                        Tap to flip back
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
+
           <Link
-            href={"/services"}
-            className="btn btn-accent btn-soft text-lg p-7 m-10"
+            href="/services"
+            className="btn btn-accent btn-soft text-lg px-10 py-5 mt-12"
           >
             View All
           </Link>
@@ -208,7 +273,7 @@ export default function Home() {
               <p className="text-sm text-gray-700">
                 3409 Conway St
                 <br />
-                Fort Worth, TX 76111
+                Fort Worth, TX 761xx
               </p>
               <div className="mt-2 w-full h-64 rounded-xl overflow-hidden">
                 <iframe
