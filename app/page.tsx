@@ -17,7 +17,7 @@ export default function Home() {
     {
       name: "Warm Bath",
       icon: <Bubbles size={64} />,
-      desc: "Cozy warm bath using gentle, dog-safe shampoo to leave coats clean and soft.",
+      desc: "A soothing warm bath using premium shampoos tailored to your dog's coat and skin needs.",
     },
     {
       name: "Gentle Blowdry & Brushing",
