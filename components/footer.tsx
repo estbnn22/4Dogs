@@ -14,6 +14,9 @@ export default function Footer() {
           <Link href={"/services"} className="link link-hover">
             Services
           </Link>
+          <Link href={"/policies"} className="link link-hover">
+            Policies
+          </Link>
           <Link href={"/settings"} className="link link-hover">
             Account Settings
           </Link>
