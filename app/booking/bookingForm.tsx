@@ -363,11 +363,15 @@ export default function BookingForm({
           Confirm Booking
         </button>
         <p className="text-xs text-gray-500 text-center">
-          By booking, you agree to our grooming policies. Final pricing may vary
-          after an in-person coat assessment.
+          By booking, you agree to our grooming{" "}
+          <Link href="/policies" className="link hover:text-blue-500">
+            policies
+          </Link>
+          . Final pricing may vary after an in-person coat assessment.
         </p>
       </section>
     </form>
   );
 }
+
 
