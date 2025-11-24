@@ -58,10 +58,10 @@ function formatBaseService(service: string | null | undefined) {
 
 // Optional: rough display prices for base services (for an "estimated total")
 const baseServiceDisplayPrices: Record<string, number> = {
-  FULL_GROOM: 6000,
-  BATH_BRUSH: 4000,
-  TIDY_TRIM: 5000,
-  PUPPY_INTRO: 3500,
+  FULL_GROOM: 8500,
+  BATH_BRUSH: 5500,
+  TIDY_TRIM: 6000,
+  PUPPY_INTRO: 4000,
 };
 
 export default function BookingForm({
@@ -340,15 +340,15 @@ export default function BookingForm({
                 <span>
                   {estimatedTotalCents
                     ? formatPrice(estimatedTotalCents)
-                    : "TBD"}
+                    : "TBD"} 
+                  <span className="text-sm font-thin">+ Tax</span>
                 </span>
               </div>
             </div>
 
             <p className="mt-3 text-xs text-gray-500">
-              Final total will depend on your dog&apos;s coat, condition, and
-              any add-ons you select. You&apos;ll see full details in your
-              confirmation email.
+              Final total will depend on your dog&apos;s coat, condition, size, and
+              any add-ons you select.
             </p>
           </div>
         </aside>
@@ -370,3 +370,4 @@ export default function BookingForm({
     </form>
   );
 }
+
