@@ -164,5 +164,4 @@ Dog / Owner fields inside Appointment
 Esteban Machuca — Full-Stack Developer
 📩 estebanmcodes@gmail.com
 
-🔗 Add GitHub link
-🔗 Add LinkedIn link
+
