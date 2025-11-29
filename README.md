@@ -1,36 +1,168 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🐾 4Dogs Grooming — Full-Stack Booking & Admin Platform
 
-## Getting Started
+A modern grooming appointment system built with Next.js, TypeScript, Prisma, PostgreSQL, and Stack Auth.
 
-First, run the development server:
+🚀 Live Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🔗 https://4dogsgrooming.org
+ (or your Vercel link — replace this)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+📝 Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4Dogs is a production-ready grooming appointment booking system featuring:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+A complete user flow for booking grooming services
 
-## Learn More
+Dynamic pricing based on services and add-ons
 
-To learn more about Next.js, take a look at the following resources:
+Real-time time-slot validation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Automated email confirmations
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+A powerful admin dashboard to manage appointments
 
-## Deploy on Vercel
+Inventory & product tracking with low-stock warnings
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Authentication + RBAC (admin vs customer)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project was built to solve real scheduling and operational needs for a grooming business.
+
+🧰 Tech Stack
+Frontend
+
+Next.js 16 (App Router, Server Components)
+
+React 19
+
+TypeScript
+
+TailwindCSS + DaisyUI
+
+Lucide Icons
+
+Responsiveness (mobile nav + desktop sidebar)
+
+Backend
+
+Prisma ORM v7
+
+Neon PostgreSQL
+
+Server Actions
+
+Zod validation (recommended)
+
+Authentication
+
+Stack Auth (Sessions + RBAC)
+
+Email
+
+Resend (Transactional email)
+
+Appointment confirmations
+
+Admin alerts
+
+Cancellation updates
+
+Deployment
+
+Vercel (frontend + backend)
+
+Neon Serverless PostgreSQL
+
+📦 Features
+🐶 Customer Features
+
+Book an appointment with:
+
+Owner name
+
+Dog name, breed, size
+
+Service type + Add-on selection
+
+Notes
+
+Date & Time
+
+Time-slot conflict detection (prevents double booking)
+
+Mobile-friendly booking flow
+
+Automatic email confirmation
+
+View success page after booking
+
+🛠️ Admin Dashboard
+
+View all appointments by:
+
+Date
+
+Status
+
+Customer info
+
+Update appointment status
+
+Cancel appointments
+
+Send status emails automatically
+
+Manage add-ons and services (coming soon)
+
+Inventory management:
+
+Track stock
+
+Low-stock alerts
+
+SKU management
+
+📧 Email Automation
+
+Using Resend:
+
+New appointment email → Admin
+
+Confirmation email → Customer
+
+Cancelled appointment email → Customer
+
+Status update email → Customer
+
+📱 Responsive Design
+
+Mobile nav for small screens
+
+Slide-out sidebar
+
+Clean and modern UI
+
+Works on all devices
+
+🗄️ Database Models
+
+Key Prisma models used:
+
+User (Stack Auth)
+
+Appointment
+
+AddOn
+
+Product (inventory)
+
+ActivityLog
+
+Dog / Owner fields inside Appointment
+
+👤 Author
+
+Esteban Machuca — Full-Stack Developer
+📩 estebanmcodes@gmail.com
+
+🔗 Add GitHub link
+🔗 Add LinkedIn link
