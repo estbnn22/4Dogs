@@ -9,7 +9,7 @@ export default async function NavBar() {
   return (
     <div className="navbar bg-base-100 shadow-sm h-20 sticky top-0 z-999">
       <div className="navbar-start flex items-center">
-        <Link href="/" className="pl-2 md:pl-5">
+        <Link href="/" className="pl-2 md:pl-5 hover:cursor-pointer">
           <Image src="/LOGO.png" alt="4Dogs Logo" width={250} height={250} />
         </Link>
       </div>
